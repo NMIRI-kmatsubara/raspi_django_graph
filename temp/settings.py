@@ -77,19 +77,6 @@ WSGI_APPLICATION = 'temp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        'ENGINE': 'django.db.backends.mysql',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'
-        'NAME': 'sample_db',
-        'USER': 'user000',
-        'PASSWORD': 'release2',
-        'HOST': 'nmiriDB.local',
-        'PORT': '3306',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
