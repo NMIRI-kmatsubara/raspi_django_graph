@@ -1,0 +1,133 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+
+
+
+<div class="area1">
+    <h2>過去データ参照</h2>
+    <canvas id="myLineChart1"></canvas>
+</div> 
+
+
+<div class="area2">
+    <h2>リアルタイムデータ参照</h2>
+    <canvas id="myLineChart2"></canvas>
+</div>
+
+
+<!--過去データ参照グラフ描画-->
+<script type="text/javascript">
+    $(function() {
+        $.getJSON("graphFactor/2019/09/04", function(data) {
+            var canvas = document.getElementById("myLineChart1");
+            var myLinechart = new Chart(canvas.getContext('2d'), {
+
+                    type: 'line',
+                    data: {
+                        labels: data.rec_time,
+                        datasets: [
+                        {
+                            label: '温度',
+                            data: data.temp,
+                            borderColor: "rgba(255,0,0,1)",
+                            backgroundColor: "rgba(0,0,0,0)"
+                        }
+                        ],
+                    },
+                    options: {
+                        title: {
+                        display: 'true',
+                        text: data.graph_title + '室温'
+                        },
+                        scales: {
+                        xAxes: [{
+                            //type: 'realtime',
+                            //realtime: {
+                                //'delay':'2000',
+                            //},
+                        }],
+                        yAxes: [{
+                            ticks: {
+                            suggestedMax: 40,
+                            suggestedMin: 0,
+                            stepSize: 10,
+                            }
+                        }]
+                        },
+                    }
+                }
+
+
+
+            );    
+        });
+    });
+</script>
+
+<!--リアルタイムデータ参照グラフ描画-->
+<script type="text/javascript">
+   
+            var canvas = document.getElementById("myLineChart2");
+            var myLinechart = new Chart(canvas.getContext('2d'), {
+
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                        {
+                            label: '温度',
+                            data: [],
+                            borderColor: "rgba(255,0,0,1)",
+                            backgroundColor: "rgba(0,0,0,0)"
+                        }
+                        ],
+                    },
+                    options: {
+                        title: {
+                        display: 'true',
+                        text: '室温'
+                        },
+                        scales: {
+                        xAxes: [{
+                            type: 'realtime',
+                            delay: 2000,
+                            maxTicksLimit: 60,
+                            autoSkip: false,
+                            realtime: {
+                                duration: 60000,
+                                onRefresh: function(chart) {
+                                    chart.data.datasets.forEach(function(dataset) {
+                                        dataset.data.push({
+                                            x: Date.now(),
+                                            y: get_data()
+                                        });
+                                    });
+                                },
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                            suggestedMax: 40,
+                            suggestedMin: 20,
+                            stepSize: 2,
+                            }
+                        }]
+                        },
+                    }
+                }
+
+
+
+            ); 
+    // ラズパイの温度センサーから温度データ取得
+    var value = 0;
+    function get_data() {
+        $.getJSON("realTimeData/", function(data) {
+            value = data.temp;
+        });
+        return value;
+    };
+</script>
+
+{% endblock content %}
